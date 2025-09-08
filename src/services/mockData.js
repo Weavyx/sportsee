@@ -106,17 +106,88 @@ export const createMockService = () => ({
   },
 });
 
+// Données spécifiques pour l'utilisateur 18
+export const mockActivityDataUser18 = {
+  data: {
+    userId: 18,
+    sessions: [
+      { day: "2020-07-01", kilogram: 70, calories: 300 },
+      { day: "2020-07-02", kilogram: 69, calories: 350 },
+      { day: "2020-07-03", kilogram: 70, calories: 320 },
+      { day: "2020-07-04", kilogram: 70, calories: 280 },
+      { day: "2020-07-05", kilogram: 69, calories: 400 },
+      { day: "2020-07-06", kilogram: 68, calories: 450 },
+      { day: "2020-07-07", kilogram: 67, calories: 380 },
+    ],
+  },
+};
+
+export const mockSessionsDataUser18 = {
+  data: {
+    userId: 18,
+    sessions: [
+      { day: 1, sessionLength: 45 },
+      { day: 2, sessionLength: 35 },
+      { day: 3, sessionLength: 60 },
+      { day: 4, sessionLength: 25 },
+      { day: 5, sessionLength: 55 },
+      { day: 6, sessionLength: 40 },
+      { day: 7, sessionLength: 70 },
+    ],
+  },
+};
+
+export const mockPerformanceDataUser18 = {
+  data: {
+    userId: 18,
+    kind: {
+      1: "cardio",
+      2: "energy",
+      3: "endurance",
+      4: "strength",
+      5: "speed",
+      6: "intensity",
+    },
+    data: [
+      { value: 150, kind: 1 },
+      { value: 180, kind: 2 },
+      { value: 200, kind: 3 },
+      { value: 90, kind: 4 },
+      { value: 250, kind: 5 },
+      { value: 160, kind: 6 },
+    ],
+  },
+};
+
+export const mockUserDataUser18 = {
+  data: {
+    id: 18,
+    userInfos: {
+      firstName: "Cecilia",
+      lastName: "Ratorez",
+      age: 34,
+    },
+    todayScore: 0.3,
+    keyData: {
+      calorieCount: 2103,
+      proteinCount: 132,
+      carbohydrateCount: 271,
+      lipidCount: 68,
+    },
+  },
+};
+
 // Centralisation des données mockées pour compatibilité avec UserModel
 const mockData = {
   "/user/12": () => mockUserData.data,
   "/user/12/activity": () => mockActivityData.data,
   "/user/12/average-sessions": () => mockSessionsData.data,
   "/user/12/performance": () => mockPerformanceData.data,
-  // Support pour l'utilisateur 18 (DEFAULT_USER_ID)
-  "/user/18": () => ({ ...mockUserData.data, id: 18 }),
-  "/user/18/activity": () => ({ ...mockActivityData.data, userId: 18 }),
-  "/user/18/average-sessions": () => ({ ...mockSessionsData.data, userId: 18 }),
-  "/user/18/performance": () => ({ ...mockPerformanceData.data, userId: 18 }),
+  // Données spécifiques pour l'utilisateur 18
+  "/user/18": () => mockUserDataUser18.data,
+  "/user/18/activity": () => mockActivityDataUser18.data,
+  "/user/18/average-sessions": () => mockSessionsDataUser18.data,
+  "/user/18/performance": () => mockPerformanceDataUser18.data,
 };
 
 /**
@@ -131,6 +202,10 @@ export default {
   mockSessionsData,
   mockPerformanceData,
   mockUserData,
+  mockActivityDataUser18,
+  mockSessionsDataUser18,
+  mockPerformanceDataUser18,
+  mockUserDataUser18,
   createMockService,
   isDevelopmentMode,
   mockData,

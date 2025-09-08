@@ -7,6 +7,10 @@ import {
   mockActivityData,
   mockSessionsData,
   mockPerformanceData,
+  mockUserDataUser18,
+  mockActivityDataUser18,
+  mockSessionsDataUser18,
+  mockPerformanceDataUser18,
 } from "./mockData.js";
 
 export class DataService {
@@ -17,24 +21,19 @@ export class DataService {
 
   // Données mockées organisées par endpoint
   static mockDataMap = {
-    [`/user/${DataService.DEFAULT_USER_ID}`]: () => mockUserData.data,
+    // Utilisateur 18 - Cecilia (données spécifiques)
+    [`/user/${DataService.DEFAULT_USER_ID}`]: () => mockUserDataUser18.data,
     [`/user/${DataService.DEFAULT_USER_ID}/activity`]: () =>
-      mockActivityData.data,
+      mockActivityDataUser18.data,
     [`/user/${DataService.DEFAULT_USER_ID}/average-sessions`]: () =>
-      mockSessionsData.data,
+      mockSessionsDataUser18.data,
     [`/user/${DataService.DEFAULT_USER_ID}/performance`]: () =>
-      mockPerformanceData.data,
-    // Support pour l'utilisateur 12 aussi
-    ["/user/12"]: () => ({ ...mockUserData.data, id: 12 }),
-    ["/user/12/activity"]: () => ({ ...mockActivityData.data, userId: 12 }),
-    ["/user/12/average-sessions"]: () => ({
-      ...mockSessionsData.data,
-      userId: 12,
-    }),
-    ["/user/12/performance"]: () => ({
-      ...mockPerformanceData.data,
-      userId: 12,
-    }),
+      mockPerformanceDataUser18.data,
+    // Utilisateur 12 - Karl (données originales)
+    ["/user/12"]: () => mockUserData.data,
+    ["/user/12/activity"]: () => mockActivityData.data,
+    ["/user/12/average-sessions"]: () => mockSessionsData.data,
+    ["/user/12/performance"]: () => mockPerformanceData.data,
   };
 
   /**
