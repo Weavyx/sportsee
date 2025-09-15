@@ -1,7 +1,7 @@
 {
   "name": "sportsee",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "start": "vite",
     "docs": "jsdoc -c jsdoc.json",
-    "docs:serve": "jsdoc -c jsdoc.json && start ./docs/index.html"
+  "docs:serve": "jsdoc -c jsdoc.json && start ./docs/sportsee/1.0.0/index.html"
   },
   "dependencies": {
     "react": "^19.1.1",

@@ -112,7 +112,6 @@ yarn install
 
 ```bash
 # Démarrage du serveur de développement
-npm run dev
 # ou
 yarn dev
 ```
@@ -419,6 +418,7 @@ const withGhosts = SessionsTransformer.addGhostPoints(rawSessionsData);
 Trois niveaux de hooks pour une architecture flexible :
 
 **Hooks de base (hooks.js) :**
+
 ```javascript
 useUser(userId)          // Données utilisateur brutes
 useUserActivity(userId)  // Activité quotidienne
@@ -427,6 +427,7 @@ useUserPerformance(userId) // Données de performance
 ```
 
 **Hook générique optimisé (useApiData.js) :**
+
 ```javascript
 const { data, loading, error } = useApiData(
   `/user/${userId}/activity`,
@@ -435,6 +436,7 @@ const { data, loading, error } = useApiData(
 ```
 
 **Hooks spécialisés graphiques (chartHooks.js) :**
+
 ```javascript
 useActivityChart(userId)    // Données formatées pour barres combinées
 useSessionsChart(userId)    // Courbe avec points fantômes
@@ -446,6 +448,7 @@ useAllCharts(userId)        // Tous les graphiques optimisés
 ### Optimisations Performances
 
 #### Dashboard avec useMemo
+
 ```javascript
 // Calculs coûteux mémorisés
 const statsData = useMemo(() => ({
@@ -462,6 +465,7 @@ const firstName = useMemo(() =>
 ```
 
 #### useApiData avec useRef
+
 ```javascript
 // Évite les boucles infinies de re-rendu
 const dependenciesRef = useRef();
@@ -631,5 +635,3 @@ Ce projet est développé dans le cadre d'une formation OpenClassrooms.
 ---
 
 **SportSee** - Tableau de bord analytics sportif moderne
-
-[🚀 Démarrer](#-installation) • [📊 API](#-api-et-données) • [🏗️ Architecture](#-architecture-du-code)
