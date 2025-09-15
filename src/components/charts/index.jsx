@@ -37,28 +37,36 @@ import ScoreChartReal from "./ScoreChart.jsx";
 
 /**
  * Composant graphique d'activité quotidienne
- * @type {React.ComponentType<{userId?: number}>}
+ * @type {React.ComponentType}
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId] - ID de l'utilisateur (optionnel)
  * @see ActivityChartReal
  */
 const ActivityChart = ActivityChartReal;
 
 /**
  * Composant graphique des sessions moyennes
- * @type {React.ComponentType<{userId?: number}>}
+ * @type {React.ComponentType}
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId] - ID de l'utilisateur (optionnel)
  * @see SessionsChartReal
  */
 const SessionsChart = SessionsChartReal;
 
 /**
  * Composant graphique radar de performance
- * @type {React.ComponentType<{userId?: number}>}
+ * @type {React.ComponentType}
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId] - ID de l'utilisateur (optionnel)
  * @see PerformanceChartReal
  */
 const PerformanceChart = PerformanceChartReal;
 
 /**
  * Composant graphique circulaire de score
- * @type {React.ComponentType<{userId?: number}>}
+ * @type {React.ComponentType}
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId] - ID de l'utilisateur (optionnel)
  * @see ScoreChartReal
  */
 const ScoreChart = ScoreChartReal;
