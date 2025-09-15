@@ -1,3 +1,28 @@
+/**
+ * Page Dashboard principale de l'application SportSee
+ *
+ * Affiche le tableau de bord complet d'un utilisateur avec :
+ * - Message de bienvenue personnalisé
+ * - Graphiques d'activité, sessions, performance et score
+ * - Statistiques nutritionnelles (calories, protéines, glucides, lipides)
+ *
+ * @component
+ * @returns {JSX.Element} Page dashboard complète
+ *
+ * @example
+ * // Utilisation avec React Router
+ * <Route path="/dashboard/:userId" element={<Dashboard />} />
+ *
+ * @example
+ * // Affichage direct avec utilisateur spécifique
+ * function App() {
+ *   return <Dashboard />;
+ * }
+ *
+ * @requires react-router-dom
+ * @requires ../services/hooks.js
+ * @requires ../services/DataService.js
+ */
 import Header from '../components/Header.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import './dashboard.css';

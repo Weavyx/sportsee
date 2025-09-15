@@ -1,5 +1,46 @@
 /**
- * SessionsChart - Version simplifiée avec activeDot natif
+ * Composant graphique en ligne des sessions moyennes SportSee
+ *
+ * Affiche un graphique en ligne des durées moyennes de sessions d'entraînement
+ * par jour de la semaine. Inclut des interactions au survol avec overlay et tooltip.
+ * Utilise des points fantômes pour améliorer le rendu visuel aux extrémités.
+ *
+ * @component
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId=18] - ID de l'utilisateur pour lequel afficher les sessions
+ * @returns {JSX.Element} Graphique en ligne des sessions ou état de chargement/erreur
+ *
+ * @example
+ * // Utilisation basique avec utilisateur par défaut
+ * <SessionsChart />
+ *
+ * @example
+ * // Utilisation avec utilisateur spécifique
+ * <SessionsChart userId={12} />
+ *
+ * @example
+ * // Intégration dans un tableau de bord
+ * function WeeklyInsights({ userId }) {
+ *   return (
+ *     <div className="weekly-container">
+ *       <h2>Analyse hebdomadaire</h2>
+ *       <SessionsChart userId={userId} />
+ *     </div>
+ *   );
+ * }
+ *
+ * @description
+ * Le composant gère :
+ * - Affichage des jours de la semaine (L, M, M, J, V, S, D)
+ * - Points fantômes invisibles aux extrémités pour une courbe fluide
+ * - Overlay sombre au survol à droite du curseur
+ * - Tooltip personnalisé affichant la durée en minutes
+ * - Gestion des états de chargement et d'erreur
+ *
+ * @requires react
+ * @requires recharts
+ * @requires ../../services/chartHooks.js
+ * @uses {ChartHookState<FormattedSession[]>} useSessionsChart
  */
 import React, { useState, useCallback, useMemo } from 'react';
 import {
@@ -11,7 +52,6 @@ import {
   Tooltip
 } from 'recharts';
 import { useSessionsChart } from '../../services/chartHooks.js';
-import SessionsActiveDot from './SessionsActiveDot.jsx';
 import './charts.css';
 
 const SessionsChart = ({ userId = 18 }) => {
@@ -99,7 +139,6 @@ const SessionsChart = ({ userId = 18 }) => {
             stroke="url(#sessionsGradient)"
             strokeWidth={2}
             dot={false}
-            activeDot={SessionsActiveDot}
           />
         </LineChart>
       </ResponsiveContainer>

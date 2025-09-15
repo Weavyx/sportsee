@@ -1,5 +1,36 @@
 /**
- * ScoreChart - Version fonctionnelle avec styles originaux
+ * Composant graphique circulaire de score quotidien SportSee
+ *
+ * Affiche le pourcentage de réalisation de l'objectif quotidien sous forme
+ * de graphique en secteurs (doughnut chart) avec texte central.
+ * Utilise todayScore ou score depuis les données utilisateur.
+ *
+ * @component
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId=18] - ID de l'utilisateur pour lequel afficher le score
+ * @returns {JSX.Element} Graphique circulaire de score ou état de chargement/erreur
+ *
+ * @example
+ * // Utilisation basique avec utilisateur par défaut
+ * <ScoreChart />
+ *
+ * @example
+ * // Utilisation avec utilisateur spécifique
+ * <ScoreChart userId={12} />
+ *
+ * @example
+ * // Intégration dans une grille de graphiques
+ * function MetricsGrid({ userId }) {
+ *   return (
+ *     <div className="metrics-grid">
+ *       <ScoreChart userId={userId} />
+ *     </div>
+ *   );
+ * }
+ *
+ * @requires recharts
+ * @requires ../../services/hooks.js
+ * @uses {DataHookResult<UserData>} useUser
  */
 import React from 'react';
 import {

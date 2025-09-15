@@ -1,6 +1,30 @@
 /**
- * Composant graphique d'activité quotidienne
- * Graphique en barres combiné avec poids et calories
+ * Composant graphique d'activité quotidienne SportSee
+ *
+ * Affiche un graphique en barres combiné montrant le poids (kg) et les calories brûlées
+ * pour chaque jour de la semaine. Utilise recharts pour le rendu.
+ *
+ * @component
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId=12] - ID de l'utilisateur pour lequel afficher l'activité
+ * @returns {JSX.Element} Graphique d'activité ou état de chargement/erreur
+ *
+ * @example
+ * // Utilisation basique
+ * <ActivityChart userId={18} />
+ *
+ * @example
+ * // Utilisation dans un dashboard
+ * function Dashboard({ userId }) {
+ *   return (
+ *     <div className="dashboard">
+ *       <ActivityChart userId={userId} />
+ *     </div>
+ *   );
+ * }
+ *
+ * @requires recharts
+ * @requires ../../services/chartHooks.js
  */
 import {
   ResponsiveContainer,
@@ -19,6 +43,9 @@ import './charts.css';
 
 /**
  * Composant principal du graphique d'activité
+ *
+ * @param {Object} props - Props du composant
+ * @param {number} [props.userId=12] - ID utilisateur
  */
 const ActivityChart = ({ userId = 12 }) => {
   const { data, loading, error } = useActivityChart(userId);

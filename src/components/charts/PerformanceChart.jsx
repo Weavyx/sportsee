@@ -1,5 +1,37 @@
 /**
- * PerformanceChart - Version fonctionnelle avec styles originaux
+ * Composant graphique radar de performance SportSee
+ *
+ * Affiche un graphique radar des performances sportives de l'utilisateur
+ * avec les catégories : Cardio, Énergie, Endurance, Force, Vitesse, Intensité.
+ * Utilise les données formatées par le hook usePerformanceChart.
+ *
+ * @component
+ * @param {Object} props - Propriétés du composant
+ * @param {number} [props.userId=18] - ID de l'utilisateur pour lequel afficher les performances
+ * @returns {JSX.Element} Graphique radar de performance ou état de chargement/erreur
+ *
+ * @example
+ * // Utilisation basique avec utilisateur par défaut
+ * <PerformanceChart />
+ *
+ * @example
+ * // Utilisation avec utilisateur spécifique
+ * <PerformanceChart userId={12} />
+ *
+ * @example
+ * // Intégration dans un dashboard
+ * function UserDashboard({ userId }) {
+ *   return (
+ *     <div className="charts-container">
+ *       <PerformanceChart userId={userId} />
+ *       <ActivityChart userId={userId} />
+ *     </div>
+ *   );
+ * }
+ *
+ * @requires recharts
+ * @requires ../../services/chartHooks.js
+ * @uses {ChartHookState<FormattedPerformanceData[]>} usePerformanceChart
  */
 import React from 'react';
 import {
