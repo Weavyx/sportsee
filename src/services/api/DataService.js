@@ -26,7 +26,9 @@ import {
   mockActivityDataUser18,
   mockSessionsDataUser18,
   mockPerformanceDataUser18,
-} from "./mockData.js";
+} from "../data/mockData.js";
+
+import { DataNormalizer } from "../data/DataNormalizer.js";
 
 export class DataService {
   /**
@@ -119,8 +121,15 @@ export class DataService {
       throw new Error(`Données mockées non trouvées pour: ${endpoint}`);
     }
 
-    const data = mockFunction();
-    return data;
+    const rawData = mockFunction();
+
+    // ✅ Application de la normalisation aussi sur les données mockées
+    const normalizedData = DataNormalizer.normalizeByEndpoint(
+      endpoint,
+      rawData
+    );
+
+    return normalizedData;
   }
 
   /**
@@ -148,9 +157,15 @@ export class DataService {
       }
 
       const result = await response.json();
-      const data = result.data; // Structure API SportSee
+      const rawData = result.data; // Structure API SportSee
 
-      return data;
+      // ✅ Application de la normalisation selon le type d'endpoint
+      const normalizedData = DataNormalizer.normalizeByEndpoint(
+        endpoint,
+        rawData
+      );
+
+      return normalizedData;
     } catch (error) {
       throw new Error(`Échec de l'appel API: ${error.message}`);
     }
@@ -267,39 +282,6 @@ export class DataService {
    */
   static async getUserPerformance(userId = DataService.DEFAULT_USER_ID) {
     return await DataService.fetchData(`/user/${userId}/performance`);
-  }
-
-  /**
-   * Active ou désactive le mode données mockées
-   *
-   * @static
-   * @param {boolean} useMock - true pour utiliser les données mockées, false pour l'API
-   * @returns {void}
-   *
-   * @example
-   * // Activer le mode mock pour les tests
-   * DataService.setMockMode(true);
-   *
-   * @example
-   * // Utiliser l'API réelle en production
-   * DataService.setMockMode(false);
-   */
-  static setMockMode(useMock) {
-    DataService.USE_MOCK_DATA = useMock;
-  }
-
-  /**
-   * Retourne le mode de fonctionnement actuel
-   *
-   * @static
-   * @returns {"MOCK"|"API"} Le mode actuel d'utilisation des données
-   *
-   * @example
-   * const currentMode = DataService.getCurrentMode();
-   * console.log(`Mode actuel: ${currentMode}`); // "Mode actuel: MOCK" ou "Mode actuel: API"
-   */
-  static getCurrentMode() {
-    return DataService.USE_MOCK_DATA ? "MOCK" : "API";
   }
 }
 

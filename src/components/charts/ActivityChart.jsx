@@ -36,7 +36,7 @@ import {
   Tooltip,
   Legend
 } from 'recharts';
-import { useActivityChart } from '../../services/chartHooks.js';
+import { useActivityChart } from '../../services/hooks/chartHooks.js';
 
 import ActivityTooltip from './ActivityTooltip.jsx';
 import './charts.css';

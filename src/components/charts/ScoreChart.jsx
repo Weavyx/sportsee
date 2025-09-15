@@ -29,8 +29,8 @@
  * }
  *
  * @requires recharts
- * @requires ../../services/hooks.js
- * @uses {DataHookResult<UserData>} useUser
+ * @requires ../../services/chartHooks.js
+ * @uses {ChartHookState<FormattedScoreData>} useScoreChart
  */
 import React from 'react';
 import {
@@ -39,30 +39,29 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { useUser } from '../../services/hooks.js';
+import { useScoreChart } from '../../services/hooks/chartHooks.js';
 import './charts.css';
 
 const ScoreChart = ({ userId = 18 }) => {
-  const { data: userData, loading, error } = useUser(userId);
+  const { data, loading, error } = useScoreChart(userId);
 
   if (loading) {
     return <div className="chart-loading">Chargement...</div>;
   }
 
   if (error) {
-    return <div className="chart-error">Erreur: {error.message}</div>;
+    return <div className="chart-error">Erreur: {error}</div>;
   }
 
-  if (!userData) {
+  if (!data) {
     return <div className="chart-empty">Aucune donnée</div>;
   }
 
-  // Récupération du score (todayScore ou score)
-  const score = userData.todayScore || userData.score || 0;
-  const scorePercentage = Math.round(score * 100);
+  // Récupération du pourcentage transformé
+  const scorePercentage = data.percentage;
 
   // Données pour le graphique en secteurs
-  const data = [
+  const chartData = [
     { name: 'Score', value: scorePercentage, fill: '#FF0101' },
     { name: 'Reste', value: 100 - scorePercentage, fill: 'transparent' }
   ];
@@ -75,7 +74,7 @@ const ScoreChart = ({ userId = 18 }) => {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={chartData}
               cx="50%"
               cy="50%"
               startAngle={90}
@@ -86,7 +85,7 @@ const ScoreChart = ({ userId = 18 }) => {
               cornerRadius={15}
               paddingAngle={0}
             >
-              {data.map((entry, index) => (
+              {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
               ))}
             </Pie>

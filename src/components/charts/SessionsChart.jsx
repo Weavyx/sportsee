@@ -51,7 +51,7 @@ import {
   YAxis,
   Tooltip
 } from 'recharts';
-import { useSessionsChart } from '../../services/chartHooks.js';
+import { useSessionsChart } from '../../services/hooks/chartHooks.js';
 import './charts.css';
 
 const SessionsChart = ({ userId = 18 }) => {

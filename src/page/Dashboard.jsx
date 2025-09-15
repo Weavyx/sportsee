@@ -23,6 +23,7 @@
  * @requires ../services/hooks.js
  * @requires ../services/DataService.js
  */
+import React, { useMemo } from 'react';
 import Header from '../components/Header.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import './dashboard.css';
@@ -30,9 +31,9 @@ import CarbsIcon from '../assets/icons/carbs-icon.png?url';
 import ProteinIcon from '../assets/icons/protein-icon.png?url';
 import SugarIcon from '../assets/icons/sugar-icon.png?url';
 import FatIcon from '../assets/icons/fat-icon.png?url';
-import { useUser } from '../services/hooks.js';
+import { useUser } from '../services/hooks/hooks.js';
 import { useParams } from 'react-router-dom';
-import { DataService } from '../services/DataService.js';
+import { DataService } from '../services/api/DataService.js';
 import {
   ActivityChart,
   SessionsChart,
@@ -50,23 +51,8 @@ const Dashboard = () => {
   // Utilisation du hook pour récupérer les données utilisateur
   const { data: userData, loading, error } = useUser(numericUserId);
 
-  // Guard: si pas d'userId, on attend le router
-  if (!userId) {
-    return (
-      <main className="main-content">
-        <Header />
-        <Sidebar />
-        <div className='dashboard'>
-          <div className='dashboard__welcome'>
-            <h2 className='dashboard__title'>Initialisation...</h2>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  // Génération dynamique des statistiques à partir des données API
-  const getStatsData = () => {
+  // Optimisation: Mémorisation des statistiques pour éviter les recalculs
+  const statsData = useMemo(() => {
     if (!userData || !userData.keyData) {
       // Données par défaut si les données utilisateur sont manquantes
       return [
@@ -108,12 +94,12 @@ const Dashboard = () => {
         alt: 'Fat icon'
       }
     ];
-  };
+  }, [userData]);
 
-  const statsData = getStatsData();
-
-  // Récupération du prénom utilisateur
-  const firstName = userData?.userInfos?.firstName || 'Utilisateur';
+  // Optimisation: Mémorisation du prénom utilisateur
+  const firstName = useMemo(() => {
+    return userData?.userInfos?.firstName || 'Utilisateur';
+  }, [userData]);
 
   // Gestion des états de chargement et d'erreur
   if (loading) {
@@ -124,7 +110,7 @@ const Dashboard = () => {
         <div className='dashboard'>
           <div className='dashboard__welcome'>
             <h2 className='dashboard__title'>Chargement...</h2>
-            <p className='dashboard__subtitle'>Mode: {DataService.getCurrentMode()}</p>
+            <p className='dashboard__subtitle'>Mode: {DataService.USE_MOCK_DATA ? 'MOCK' : 'API'}</p>
           </div>
         </div>
       </main>
@@ -140,7 +126,7 @@ const Dashboard = () => {
           <div className='dashboard__welcome'>
             <h2 className='dashboard__title'>Erreur de chargement</h2>
             <p className='dashboard__subtitle'>Impossible de récupérer les données utilisateur: {error}</p>
-            <p className='dashboard__subtitle'>Mode: {DataService.getCurrentMode()}</p>
+            <p className='dashboard__subtitle'>Mode: {DataService.USE_MOCK_DATA ? 'MOCK' : 'API'}</p>
           </div>
         </div>
       </main>

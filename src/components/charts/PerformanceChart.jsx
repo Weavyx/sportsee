@@ -42,7 +42,7 @@ import {
   PolarRadiusAxis,
   Radar
 } from 'recharts';
-import { usePerformanceChart } from '../../services/chartHooks.js';
+import { usePerformanceChart } from '../../services/hooks/chartHooks.js';
 import './charts.css';
 
 const PerformanceChart = ({ userId = 18 }) => {
@@ -53,7 +53,7 @@ const PerformanceChart = ({ userId = 18 }) => {
   }
 
   if (error) {
-    return <div className="chart-error">Erreur: {error.message}</div>;
+    return <div className="chart-error">Erreur: {error}</div>;
   }
 
   if (!data || !data.length) {

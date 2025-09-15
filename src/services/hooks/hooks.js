@@ -6,7 +6,7 @@
  *
  * @module hooks
  * @requires react
- * @requires ./sportSeeAPI.js
+ * @requires ./DataService.js
  * @author SportSee Team
  * @since 1.0.0
  *
@@ -26,7 +26,7 @@
  * }
  */
 import { useState, useEffect } from "react";
-import { sportSeeAPI } from "./sportSeeAPI.js";
+import { DataService } from "../api/DataService.js";
 
 /**
  * Type de retour standard des hooks de données
@@ -47,7 +47,7 @@ import { sportSeeAPI } from "./sportSeeAPI.js";
  *
  * @example
  * // Utilisation interne uniquement
- * const result = useData(sportSeeAPI.getUserById, 18);
+ * const result = useData(DataService.getUserById, 18);
  */
 const useData = (fetchFunction, userId) => {
   const [data, setData] = useState(null);
@@ -132,7 +132,7 @@ const useData = (fetchFunction, userId) => {
  * }
  */
 export const useUser = (userId) => {
-  return useData(sportSeeAPI.getUserById, userId);
+  return useData(DataService.getUserById, userId);
 };
 
 /**
@@ -171,7 +171,7 @@ export const useUser = (userId) => {
  * }
  */
 export const useUserActivity = (userId) => {
-  return useData(sportSeeAPI.getUserActivity, userId);
+  return useData(DataService.getUserActivity, userId);
 };
 
 /**
@@ -214,7 +214,7 @@ export const useUserActivity = (userId) => {
  * }
  */
 export const useUserSessions = (userId) => {
-  return useData(sportSeeAPI.getUserAverageSessions, userId);
+  return useData(DataService.getUserAverageSessions, userId);
 };
 
 /**
@@ -259,5 +259,5 @@ export const useUserSessions = (userId) => {
  * }
  */
 export const useUserPerformance = (userId) => {
-  return useData(sportSeeAPI.getUserPerformance, userId);
+  return useData(DataService.getUserPerformance, userId);
 };

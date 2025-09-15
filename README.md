@@ -22,7 +22,10 @@ SportSee est une application web moderne de suivi et d'analyse de performances s
 ### Architecture Technique
 
 - **Mode dual** : Basculement entre données API réelles et données mockées
+- **Normalisation automatique** : Gestion des inconsistances de schéma API
 - **Hooks personnalisés** : Gestion avancée des états de chargement et d'erreur
+- **Transformateurs de données** : Logique pure de formatage pour graphiques
+- **Architecture modulaire** : Services organisés par responsabilité (api/, data/, transformers/, hooks/)
 - **Design responsive** : Optimisé pour les résolutions 1024x720 à 1440x1024
 - **Routage dynamique** : Navigation multi-utilisateurs avec React Router
 
@@ -159,12 +162,21 @@ sportsee/
 │   ├── page/
 │   │   ├── Dashboard.jsx   # Page principale
 │   │   └── dashboard.css   # Styles du dashboard
-│   ├── services/
-│   │   ├── DataService.js  # Service de données principal
-│   │   ├── sportSeeAPI.js  # Interface API simplifiée
-│   │   ├── hooks.js        # Hooks de données React
-│   │   ├── chartHooks.js   # Hooks spécialisés graphiques
-│   │   └── mockData.js     # Données de démonstration
+│   ├── services/           # Architecture modulaire organisée
+│   │   ├── index.js        # Point d'entrée centralisé des services
+│   │   ├── api/
+│   │   │   └── DataService.js          # Service de données principal unifié
+│   │   ├── data/
+│   │   │   ├── index.js                # Exports des données et normalisation
+│   │   │   ├── DataNormalizer.js       # Normalisation schémas API
+│   │   │   └── mockData.js             # Données de démonstration
+│   │   ├── transformers/
+│   │   │   └── ChartTransformers.js    # Formatage pur pour graphiques
+│   │   └── hooks/
+│   │       ├── index.js                # Exports des hooks React
+│   │       ├── useApiData.js           # Hook générique API avec optimisations
+│   │       ├── hooks.js                # Hooks utilisateur basiques
+│   │       └── chartHooks.js           # Hooks spécialisés graphiques
 │   ├── types/
 │   │   └── jsdoc-types.js  # Définitions de types JSDoc
 │   ├── App.jsx             # Composant racine simple
@@ -197,21 +209,28 @@ http://localhost:5173/
 
 ### Mode Données (Mock vs API)
 
-L'application peut fonctionner en deux modes :
+L'application utilise un système de configuration statique avec normalisation automatique :
 
 #### Mode Mock (Par défaut)
 
 ```javascript
 // Dans DataService.js
-static USE_MOCK_DATA = true;
+static USE_MOCK_DATA = false; // true = données mockées, false = API réelle
 ```
+
+**Avantages :**
+
+- Développement rapide sans dépendance backend
+- Données cohérentes et testées
+- Normalisation appliquée automatiquement
+- Deux utilisateurs complets disponibles (ID: 12 et 18)
 
 #### Mode API Réelle
 
-Pour utiliser l'API réelle, assurez-vous que le backend SportSee est démarré sur `http://localhost:3000` :
+Pour utiliser l'API réelle, modifiez la configuration dans `DataService.js` :
 
 ```javascript
-// Dans DataService.js
+// Dans services/api/DataService.js
 static USE_MOCK_DATA = false;
 ```
 
@@ -224,17 +243,16 @@ static USE_MOCK_DATA = false;
 
 > **Note** : Utilisez `yarn` plutôt que `npm` pour le backend, comme recommandé dans la documentation officielle.
 
-Le mode peut aussi être changé dynamiquement :
+#### Normalisation Automatique
 
-```javascript
-import { DataService } from './services/DataService.js';
+Le système **DataNormalizer** traite automatiquement les inconsistances de l'API :
 
-// Basculer vers l'API réelle
-DataService.setMockMode(false);
+- **Score unifié** : Gère `todayScore` vs `score` selon l'utilisateur
+- **Performance mappée** : Convertit les clés numériques en noms lisibles
+- **Sessions complètes** : Ajoute les jours manquants avec `sessionLength: 0`
+- **Données fallback** : Valeurs par défaut pour éviter les erreurs
 
-// Retourner au mode mock
-DataService.setMockMode(true);
-```
+La normalisation s'applique **aussi bien aux données mockées qu'aux données API** pour garantir une interface cohérente.
 
 ## 📊 API et Données
 
@@ -344,50 +362,135 @@ http://localhost:3000/user/18/performance
 
 ## 🏗️ Architecture du Code
 
-### Services et Hooks
+### Services Modulaires
 
-#### DataService
+L'architecture des services est organisée par responsabilité dans des dossiers séparés :
+
+#### DataService (services/api/)
 
 Service principal gérant l'accès aux données :
 
-- Basculement automatique mock/API
-- Gestion d'erreurs unifiée
-- Cache et optimisations
-
-#### Hooks Personnalisés
+- **Configuration statique** mock/API via USE_MOCK_DATA
+- **Gestion d'erreurs unifiée** avec fallbacks appropriés
+- **Normalisation transparente** appliquée aux deux modes
+- **Cache et optimisations** pour les performances
 
 ```javascript
-// Hooks de données de base
-useUser(userId)          // Données utilisateur
-useUserActivity(userId)  // Activité quotidienne
-useUserSessions(userId)  // Sessions moyennes
-useUserPerformance(userId) // Performance
+// Utilisation simple
+import { DataService } from './services/index.js';
 
-// Hooks spécialisés graphiques
-useActivityChart(userId)    // Données formatées pour graphique d'activité
-useSessionsChart(userId)    // Données avec points fantômes
-usePerformanceChart(userId) // Données réordonnées pour radar
-useScoreChart(userId)       // Pourcentage calculé
-useAllCharts(userId)        // Tous les graphiques en une fois
+const userData = await DataService.getUserById(18);
+const activity = await DataService.getUserActivity(18);
+```#### DataNormalizer (services/data/)
+
+Système de normalisation automatique des inconsistances API :
+
+```javascript
+// Exemples d'inconsistances gérées
+// Utilisateur 12: { "todayScore": 0.12 }
+// Utilisateur 18: { "score": 0.3 }
+// → Toujours accessible via data.score
+
+// Performance avec mapping intelligent
+// API: { value: 150, kind: 1 } où kind.1 = "cardio"
+// → Normalisé: { value: 150, kind: "cardio" }
+
+// Sessions avec jours manquants
+// API: [{ day: 1, sessionLength: 30 }, { day: 3, sessionLength: 45 }]
+// → Normalisé: [..., { day: 2, sessionLength: 0 }, ...]
 ```
 
-### Composants de Graphiques
+#### ChartTransformers (services/transformers/)
 
-Chaque graphique est un composant autonome avec :
+Logique pure de formatage des données pour les graphiques, séparée de React :
 
-- **Gestion d'état** : Loading, erreur, données
-- **Formatage automatique** : Adaptation des données pour Recharts
-- **Responsive design** : S'adapte aux différentes résolutions
-- **Interactions** : Tooltips, survol, animations
+```javascript
+import { ActivityTransformer, SessionsTransformer } from './services/index.js';
 
-### Système de Types
+// Formatage pour graphique d'activité
+const chartData = ActivityTransformer.format(rawActivityData);
+
+// Ajout de points fantômes pour sessions
+const withGhosts = SessionsTransformer.addGhostPoints(rawSessionsData);
+```
+
+#### Hooks Personnalisés (services/hooks/)
+
+Trois niveaux de hooks pour une architecture flexible :
+
+**Hooks de base (hooks.js) :**
+```javascript
+useUser(userId)          // Données utilisateur brutes
+useUserActivity(userId)  // Activité quotidienne
+useUserSessions(userId)  // Sessions moyennes
+useUserPerformance(userId) // Données de performance
+```
+
+**Hook générique optimisé (useApiData.js) :**
+```javascript
+const { data, loading, error } = useApiData(
+  `/user/${userId}/activity`,
+  [userId] // Dépendances avec useRef pour éviter boucles infinies
+);
+```
+
+**Hooks spécialisés graphiques (chartHooks.js) :**
+```javascript
+useActivityChart(userId)    // Données formatées pour barres combinées
+useSessionsChart(userId)    // Courbe avec points fantômes
+usePerformanceChart(userId) // Radar avec données réordonnées
+useScoreChart(userId)       // Score en pourcentage
+useAllCharts(userId)        // Tous les graphiques optimisés
+```
+
+### Optimisations Performances
+
+#### Dashboard avec useMemo
+```javascript
+// Calculs coûteux mémorisés
+const statsData = useMemo(() => ({
+  calorieCount: userData?.keyData?.calorieCount ?? 0,
+  proteinCount: userData?.keyData?.proteinCount ?? 0,
+  carbohydrateCount: userData?.keyData?.carbohydrateCount ?? 0,
+  lipidCount: userData?.keyData?.lipidCount ?? 0
+}), [userData]);
+
+const firstName = useMemo(() =>
+  userData?.userInfos?.firstName ?? 'Utilisateur',
+  [userData]
+);
+```
+
+#### useApiData avec useRef
+```javascript
+// Évite les boucles infinies de re-rendu
+const dependenciesRef = useRef();
+const isEqual = JSON.stringify(dependencies) === JSON.stringify(dependenciesRef.current);
+```
+
+### Point d'Entrée Centralisé
+
+Le fichier `services/index.js` offre un accès unifié à tous les services :
+
+```javascript
+// Import centralisé
+import {
+  DataService,           // Service principal
+  DataNormalizer,        // Normalisation
+  ActivityTransformer,   // Transformateurs
+  useActivityChart,      // Hooks spécialisés
+  useApiData            // Hook générique
+} from './services/index.js';
+```### Système de Types
 
 Le projet utilise JSDoc avec des types centralisés dans `src/types/jsdoc-types.js` pour :
 
-- Documentation du code
-- IntelliSense amélioré
-- Validation des données
-- Maintenance facilitée
+- **Documentation du code** claire et maintenue
+- **IntelliSense amélioré** dans l'éditeur
+- **Validation des données** en développement
+- **Maintenance facilitée** avec typage explicite
+
+Cette architecture modulaire permet une maintenance aisée, des tests isolés, et une évolutivité optimale du code.
 
 ## 🎨 Design et Responsive
 
